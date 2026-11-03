@@ -146,7 +146,7 @@ Now you'll run the app through the Power Apps CLI's local host, which gives the 
 1. The first time the app calls the connection, you'll see a consent dialog that names the Office 365 Users connector and the data it can access. Review it, then accept it. This dialog is expected the first time any app uses a new connection — it isn't an error.
 1. Review the profile card in the running app.
 
-   You should see your own display name, job title, and department, in place of the placeholder text "Profile data will appear here once the connection is wired up."
+   You should see your own display name and any job title and department stored in your profile, in place of the placeholder text "Profile data will appear here once the connection is wired up." Some accounts have no job title or department. Those fields remain blank when the connector returns `null` or an empty value; this isn't a connection failure.
 
    > **Tip**: If the app shows an error instead of your profile, confirm you completed every step in the previous section, and that the connection ID you used in **Create or select a connection and add it as a data source** matches a connection to `shared_office365users`.
 
@@ -169,7 +169,7 @@ Running the app locally proves the connection works during development. Publishi
 1. Open the Power Apps URL the command returns, or go to [Power Apps](https://make.powerapps.com){:target="_blank"} (`https://make.powerapps.com`), find `ab400-lab05-code-app` in your list of apps, and open it.
 1. Review the profile card in the published app.
 
-   You should see the same display name, job title, and department you saw when you ran the app locally, confirming the connection you configured survives publishing and isn't a local-only artifact.
+   You should see the same profile values you saw locally, including blank job title or department fields if they weren't populated. This confirms the connection you configured survives publishing and isn't a local-only artifact.
 
 ## Summary
 
@@ -183,4 +183,4 @@ Clean-up for this exercise is optional. The Power Apps CLI has no command to del
 
 1. Go to [Power Apps](https://make.powerapps.com){:target="_blank"} (`https://make.powerapps.com`).
 1. Select **Apps**, find `ab400-lab05-code-app`, and delete it.
-1. Select **Connections**, find **AB-400 Lab 05 connection**, and delete it.
+1. If you created **AB-400 Lab 05 connection** for this exercise and no other app uses it, select **Connections**, find that connection, and delete it. If you reused an existing connection, leave it in place.
