@@ -281,9 +281,12 @@ The app also shows a fulfilment contact address, read at run time from the `eqp_
 
 You should see a contact address under "Questions about fulfilment?" - this is whatever value the environment currently holds, default or not.
 
-1. In the [Power Apps maker portal](https://make.powerapps.com){:target="_blank"} at `https://make.powerapps.com`, select **Solutions**, and open **Equipment Provisioning (base)**.
-1. Filter the components list to **Environment variables**, and select **Fulfillment contact**.
-1. Under **Current Value**, enter a new value, for example `lab04-fulfilment@example.com`, then select **Save**.
+1. In the [Power Apps maker portal](https://make.powerapps.com){:target="_blank"} at `https://make.powerapps.com`, confirm the selected environment, then open **Solutions** > **Default Solution** > **Objects** > **Environment variables**.
+1. Open **Fulfillment contact** (`eqp_FulfillmentContact`). Record its original **Current Value**, including whether it's empty, so you can restore it during cleanup. Leave **Default Value** unchanged.
+1. If no current value exists, select **New value**. Otherwise, edit the existing **Current Value** without creating a duplicate. Enter `lab04-fulfilment@example.com`, then select **Save**. Reopen the variable and confirm the stored current value.
+
+    > **Important**: Use **Default Solution**, not **Common Data Services Default Solution** or the managed **Equipment Provisioning (base)** solution, to edit the environment-specific current value. You don't need to reimport the base solution or publish separately to save it.
+
 1. Refresh the **Local Play** page again.
 
 You should now see the new value you just set, confirming the app reads the environment variable live, not a value baked in at build time.
@@ -303,10 +306,10 @@ You should see the same "isn't eligible for replacement yet" message as before, 
 
 ## Clean up
 
-If you set a current value on the `eqp_FulfillmentContact` environment variable in this exercise, you can remove it so a later run of this exercise - or the resilient cloud flow exercise, which reads the same variable - sees the published default again.
+Restore the original current value of `eqp_FulfillmentContact` so this exercise doesn't change the contact used by other apps or the resilient cloud flow exercise. If the current value was originally empty, clear your test value so the variable uses its default again.
 
-1. In the [Power Apps maker portal](https://make.powerapps.com){:target="_blank"} at `https://make.powerapps.com`, select **Solutions**, and open **Equipment Provisioning (base)**.
-1. Filter the components list to **Environment variables**, and select **Fulfillment contact**.
-1. Under **Current Value**, delete the value you entered, and select **Save**.
+1. In the [Power Apps maker portal](https://make.powerapps.com){:target="_blank"} at `https://make.powerapps.com`, open **Solutions** > **Default Solution** > **Objects** > **Environment variables**, and open **Fulfillment contact** (`eqp_FulfillmentContact`).
+1. Restore the **Current Value** you recorded earlier, or clear it if it was originally empty, then select **Save**. Don't change **Default Value** or delete the variable definition.
+1. Reopen the variable and verify the original current value is restored.
 
 The base solution, its tables, and the seed data are shared by every exercise in this course, so this exercise's clean-up never removes or changes them. You also don't need to delete the code app itself - leaving it doesn't affect any other exercise.
