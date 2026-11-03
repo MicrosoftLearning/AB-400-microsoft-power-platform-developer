@@ -208,7 +208,7 @@ The approval flow still authenticates as you. Switch its Dataverse connection to
 
 1. Turn **Lab 08 approval flow** off and wait for any active runs to finish. In the **Equipment Provisioning lab 08** solution, select **Connection references**, open **Lab 08 Dataverse (approval flow)**, and note the personal connection currently selected. You restore it during cleanup.
 
-1. Edit **Lab 08 approval flow** from the solution. Select the Dataverse availability action inside **Try**, such as **Check_availability_2**. Under **Parameters**, select **Change connection reference** > **Add new**.
+1. Edit **Lab 08 approval flow** from the solution. Select the Dataverse availability action inside **Try**, such as **Check_availability_2**. Under **Parameters**, select **Change connection reference** > **Add new**. If a connector list appears, search for **Microsoft Dataverse** and select **+** in its **Actions** column.
 
 1. In **Create connection**, enter `Lab 08 service principal` for **Connection name**. Set **Authentication Type** to **Service Principal**, not **Oauth**. In a designer that shows **Connect with service principal** instead, select that option.
 
@@ -224,7 +224,7 @@ The approval flow still authenticates as you. Switch its Dataverse connection to
 
 1. Check the action's connection reference. If the designer created and selected an automatically named reference, change the action back to **Lab 08 Dataverse (approval flow)** and save. Don't leave just one parent action on a separate reference.
 
-1. In the solution's **Connection references** list, open the original **Lab 08 Dataverse (approval flow)** reference. Select **Lab 08 service principal** under **Connection**, select **Save**, and confirm the impact dialog. Reopen the reference to verify the selected connection.
+1. In the solution's **Connection references** list, open the original **Lab 08 Dataverse (approval flow)** reference. Select **Lab 08 service principal** under **Connection**; use **Refresh** if the new connection isn't listed. Select **Save**, confirm the impact dialog, and reopen the reference to verify the selected connection.
 
 1. Confirm the parent's Dataverse trigger and actions use **Lab 08 Dataverse (approval flow)**, while the child's Dataverse actions retain **Lab 08 Dataverse (child flow)**. If an extra reference was created, use **Show dependencies** to verify it's unused before deleting only that extra reference.
 

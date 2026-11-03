@@ -253,7 +253,7 @@ You don't see the control in action yet — that's the next task.
 With the component deployed, you can add it to a column just like any other component, using the form designer.
 
 1. In the maker portal, select **Tables**, and open the **Device** table.
-1. Select **Forms**, and open the **Information** form.
+1. Select **Forms**, and open the **Information** form whose type is **Main**.
 1. In the form preview, select the **Condition rating** column.
 1. In the property pane, under **Components**, select **+ Component**.
 1. In the **Add component** dialog, look for **Device Condition Rating (Lab 07)**. If it isn't listed, select **Get more components**. In that dialog, select **Device Condition Rating (Lab 07)**, select **Add**, and wait for the dialog to close.
