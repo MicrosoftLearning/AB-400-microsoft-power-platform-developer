@@ -30,7 +30,7 @@ This exercise should take approximately **30** minutes to complete.
 To complete this exercise, you need:
 
 - An [Azure subscription](https://azure.microsoft.com/free/){:target="_blank"} at `https://azure.microsoft.com/free/`, with permission to create a resource group and deploy function app resources into it
-- A Power Platform developer environment with the **Equipment Provisioning (base)** solution installed (confirmed in the first task below)
+- A Power Platform developer environment in the same Microsoft Entra tenant as the Azure subscription, with the **Equipment Provisioning (base)** solution installed (confirmed in the first task below)
 - [Visual Studio Code](https://code.visualstudio.com/){:target="_blank"} at `https://code.visualstudio.com/`
 - The [.NET SDK](https://dotnet.microsoft.com/download){:target="_blank"} at `https://dotnet.microsoft.com/download`, version 8 or later
 - [Azure Functions Core Tools](https://learn.microsoft.com/azure/azure-functions/functions-run-local){:target="_blank"} at `https://learn.microsoft.com/azure/azure-functions/functions-run-local`, version 4
@@ -73,20 +73,30 @@ Now provision the storage account, hosting plan, and function app that your code
     az login
     ```
 
-1. Create a new resource group named `rg-ab400-lab03`, or select an existing one:
+1. Create a new resource group named `rg-ab400-lab03`, or select an existing one. Run this command only if you're creating a new group:
 
     ```azurecli
     az group create --name rg-ab400-lab03 --location <region>
     ```
 
-    Replace `<region>` with a region close to you, such as `eastus2`.
+    Replace `<region>` with a region close to you, such as `eastus2`. Record the selected group's name. If you're using an existing group, record its resources and deployments before proceeding so you can preserve them during cleanup.
 
-1. Change to the `deploy` folder, and deploy the template:
+1. From the repository root, change to the `deploy` folder and preview the deployment:
 
     ```azurecli
     cd Allfiles/03-azure-functions-request/deploy
-    az deployment group create --resource-group rg-ab400-lab03 --template-file main.bicep --query properties.outputs
+    az deployment group what-if --resource-group <resource-group> --template-file main.bicep
     ```
+
+    Replace `<resource-group>` here and in the remaining commands with the group you selected. Review the preview before deploying. Don't proceed if it changes or removes unrelated resources. If you're repeating the exercise, verify that any existing resources being updated belong to this exercise. If Bicep is missing, run `az bicep install`, then repeat the preview.
+
+1. Deploy the reviewed template:
+
+    ```azurecli
+    az deployment group create --resource-group <resource-group> --template-file main.bicep --query properties.outputs
+    ```
+
+    This creates the resources shown in the preview. Record the deployment name and the function app, hosting plan, and storage account names shown in the deployment details for cleanup.
 
 1. From the command's output, note the `functionAppName` value (for example, `func-eqp-abc1234567`). You'll use it in every remaining task.
 
@@ -105,17 +115,17 @@ An Azure resource's managed identity can't sign in to Dataverse until it exists 
 1. Sign in to the [Power Platform admin center](https://admin.powerplatform.microsoft.com){:target="_blank"} at `https://admin.powerplatform.microsoft.com`.
 1. Select **Environments**, then select your developer environment.
 1. Select **Settings** > **Users + permissions** > **Application users**.
-1. Select **+ New app user**, or select the existing application user for this managed identity if one is already listed.
+1. Check for an existing application user whose **App ID** matches the managed identity's application ID. If one exists, confirm it's active and has **Equipment Integration** and **Basic User**, then skip the remaining creation steps. Otherwise, select **+ New app user**.
 1. Select **+ Add an app**. Search for the application ID you noted in step 1, select it, and select **Add**.
 
     > **Note**: For a managed identity, search by its application ID, not its name. Managed identities don't appear in the application list by name.
 
 1. Under **Business unit**, select a business unit.
-1. Enter an email address, for example `azure-functions-lab03@example.com`.
-1. Select the edit icon next to security roles, and add **Equipment Integration** and **Basic User**. Select **Save**, then confirm the role assignment.
+1. If the form has an email address field, enter `azure-functions-lab03@example.com`. Some versions of the admin center omit this field for application users.
+1. Select the edit icon next to security roles, and add **Equipment Integration** and **Basic User**. Select **Save**, then verify the confirmation lists those two roles before confirming.
 1. Select **Create**.
 
-You should see the new application user listed with the **Equipment Integration** role. If you selected an existing application user instead, confirm it already has that role.
+You should see the application user listed with **Equipment Integration** and **Basic User**.
 
 ## Complete the Dataverse connection and status update logic
 
@@ -218,7 +228,7 @@ With the code complete, deploy it to the function app you provisioned earlier, t
 1. Set the function app's Dataverse connection setting:
 
     ```azurecli
-    az functionapp config appsettings set --name <functionAppName> --resource-group rg-ab400-lab03 --settings DATAVERSE_ENVIRONMENT_URL=<environment-url>
+    az functionapp config appsettings set --name <functionAppName> --resource-group <resource-group> --settings DATAVERSE_ENVIRONMENT_URL=<environment-url>
     ```
 
     Replace `<environment-url>` with your Dataverse environment's URL, for example `https://yourorg.crm.dynamics.com`. You can find it on the environment's details page in the Power Platform admin center.
@@ -226,7 +236,7 @@ With the code complete, deploy it to the function app you provisioned earlier, t
 1. Verify the stored Dataverse URL:
 
     ```azurecli
-    az functionapp config appsettings list --name <functionAppName> --resource-group rg-ab400-lab03 --query "[?name=='DATAVERSE_ENVIRONMENT_URL'].value" --output tsv
+    az functionapp config appsettings list --name <functionAppName> --resource-group <resource-group> --query "[?name=='DATAVERSE_ENVIRONMENT_URL'].value" --output tsv
     ```
 
     The setting command might return `null` instead of echoing the value. This read-only query should print the environment URL you supplied.
@@ -247,6 +257,8 @@ This is the moment the whole exercise has been building toward: invoke the deplo
 
 You should see **Request status** has changed from **Approved** to **In fulfillment**, **Availability** has changed from **Not checked** to **Available**, and **Availability checked on** and **Processing note** are both populated. That delay you waited through is exactly why this work runs in an Azure Function instead of inside a Dataverse plug-in: a plug-in would have held the save operation open for those same few seconds.
 
+> **Note**: The supplied template doesn't provision Application Insights, so the portal's invocation log view may be unavailable. Verify the deployed function's HTTP response and the saved Dataverse row; a successful build or deployment alone doesn't prove the function ran.
+
 > **Try this**: The supplied `RecalculateAllowances` function is already deployed. To run it on demand, open the [Azure portal](https://portal.azure.com){:target="_blank"} at `https://portal.azure.com`. For this optional browser-based test, configure cross-origin resource sharing (CORS) if the portal's origin isn't already allowed:
 >
 > 1. In the Azure portal, open your function app.
@@ -265,8 +277,9 @@ You have successfully completed this exercise.
 
 If you've finished exploring the Azure resources used in this exercise, delete them to avoid incurring unnecessary costs.
 
-1. Open the [Azure portal](https://portal.azure.com){:target="_blank"} at `https://portal.azure.com`, and view the contents of the resource group you used in this exercise (`rg-ab400-lab03`, unless you chose a different name).
-1. On the toolbar, select **Delete resource group**.
-1. Enter the resource group name, and confirm that you want to delete it.
+1. Open the [Azure portal](https://portal.azure.com){:target="_blank"} at `https://portal.azure.com`, and review the resources you created for this exercise against the inventory you recorded before deployment.
+1. If you created the resource group solely for this exercise and it contains no unrelated resources, select **Delete resource group**, enter its name, and confirm deletion. Don't delete an existing or shared resource group.
+1. If you used an existing group, delete only the function app, Flex Consumption hosting plan, and storage account created by this exercise, using the names you recorded from the deployment. Don't delete resources that existed before this exercise. Under **Deployments**, remove only the deployment record you created. A deployment record's deletion doesn't delete its resources.
+1. If you retained the resource group, refresh its resource and deployment lists. Verify that only the exercise's additions are gone and any original resources and deployment records remain.
 
-Deleting the resource group also deletes the function app's managed identity. You can leave the Dataverse application user in place; it's unlicensed and harmless to keep. If you later redeploy this exercise's resources into the same or a different resource group, the new function app gets a new managed identity, so the existing application user will no longer authenticate successfully. In that case, remove the old application user and create a new one by repeating the earlier task.
+Deleting the function app also deletes its managed identity. You can leave the Dataverse application user in place, but the deleted identity can no longer use it. If you later redeploy, the new function app gets a new managed identity; create its application user by repeating the earlier task. Don't change unrelated application users or shared solutions.
