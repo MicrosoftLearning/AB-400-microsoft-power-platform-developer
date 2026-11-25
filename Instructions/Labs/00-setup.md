@@ -22,9 +22,9 @@ Every lab needs a Power Platform environment of type **Developer**, with a Datav
 1. If you already have access to a Developer-type environment for this course and you're an admin on it, confirm its name and skip ahead to the verification step at the end of this task.
 1. If you don't yet have access to any Power Platform environment, sign up for the free [Power Apps Developer Plan](https://aka.ms/PowerAppsDevPlan){:target="_blank"} at `https://aka.ms/PowerAppsDevPlan`. The Developer Plan provisions a Developer-type environment for you automatically, and supports up to three developer environments.
 1. If you already work in a Power Platform tenant and can create environments there, sign in to the [Power Platform admin center](https://admin.powerplatform.microsoft.com){:target="_blank"} at `https://admin.powerplatform.microsoft.com`, select **Environments**, and then select **New**.
-1. Enter a name, such as `AB-400 labs`, choose a region, and set **Type** to **Developer**.
+1. Enter a name, such as `AB-400 labs`, choose a region, and set **Type** to **Trial**.
 1. Set **Add a Dataverse data store** to **Yes**, and then select **Next**.
-1. Choose a language and currency, and then select **Save**. Wait a few minutes while the environment is provisioned.
+1. Choose a language and currency, select **Security group** to **None**, and then select **Save**. Wait a few minutes while the environment is provisioned.
 
 > **Important**: Don't turn this environment into a Managed Environment. Managed Environments need extra licensing for the apps and flows the labs build, and that's not reversible.
 
